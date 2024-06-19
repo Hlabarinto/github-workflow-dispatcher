@@ -19,7 +19,7 @@ branch, owner, repo, workflow_name, ghp_token = (
 
 )
 
-def validateFile(bucket, filename):
+def getS3_Uri(bucket, filename):
 
     print('About to validate file=', filename)
 
@@ -81,7 +81,7 @@ def lambda_handler(event, context):
             'Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(
                 file, bucket))
 
-    s3_uri=validateFile(bucket, file)
+    s3_uri = getS3_Uri(bucket, file)
     print('s3_uri=', s3_uri)
 
     # Github workflow

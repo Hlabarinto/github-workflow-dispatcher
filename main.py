@@ -90,15 +90,15 @@ def lambda_handler(event, context):
         "Authorization": "Bearer " + ghp_token
     }
 
-    API_URL = "https://api.github.com/repos/{}/{}/actions/workflows/{}/dispatches".format(owner, repo, workflow_name)
-    print("api_url {}".format(API_URL))
+    api_url = "https://api.github.com/repos/{}/{}/actions/workflows/{}/dispatches".format(owner, repo, workflow_name)
+    print("api_url {}".format(api_url))
 
     deploy_body_data = {
         "ref": branch,
         "inputs": {"s3_uri": s3_uri, "environment": "NonProd"}
     }
 
-    response = requests.post(API_URL, headers=deploy_headers, data=json.dumps(deploy_body_data))
+    response = requests.post(api_url, headers=deploy_headers, data=json.dumps(deploy_body_data))
     if(response.status_code == 204):
         print('The GitHub Workflow was triggered successfully...')
     else:

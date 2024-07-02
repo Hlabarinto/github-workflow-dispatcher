@@ -8,13 +8,14 @@ from datetime import date
 ssm = boto3.client('ssm')
 s3 = boto3.client('s3')
 
-#Retrieve the Store Parameters variable
+#Retrieve the Store Parameters variables
 branch, owner, repo, workflow_name, ghp_token = (
 
     ssm.get_parameter(Name=os.environ['branch'])['Parameter']['Value'],
     ssm.get_parameter(Name=os.environ['owner'])['Parameter']['Value'],
     ssm.get_parameter(Name=os.environ['repo'])['Parameter']['Value'],
     ssm.get_parameter(Name=os.environ['workflow_name'])['Parameter']['Value'],
+    #GitHub token for username = SA008862
     ssm.get_parameter(Name=os.environ['ghp_token'])['Parameter']['Value'],
 
 )
@@ -27,25 +28,16 @@ def getS3_Uri(bucket, filename):
     print("Today's date=", today)
 
     filename_list=filename.split("/")
-    print('filename_list=', filename_list)
+    print('uploaded file details=', filename_list)
 
     filename_final=filename_list[-1]
-    print('filename_final=', filename_final)
+    print('uploaded filename=', filename_final)
 
     app_live='Deployment-Backups/Release/app-live/Vizru-App-live-Release-' + str(today)
-    print('app_live= {} and filename= {}'.format(app_live, filename))
-
     chat_system='Deployment-Backups/Release/chatsystem/Vizru-chatSystem-Release-' + str(today)
-    print('chat_system= {} and filename= {}'.format(chat_system, filename))
-
     docker='Deployment-Backups/Release/docker/Vizru-Docker-Release-' + str(today)
-    print('docker= {} and filename= {}'.format(docker, filename))
-
     pdfgen='Deployment-Backups/Release/pdfgen/Vizru-pdfgen-Release-' + str(today)
-    print('pdfgen= {} and filename= {}'.format(pdfgen, filename))
-
     pdfgenv2='Deployment-Backups/Release/pdfgenv2/Vizru-pdfgenv2-Release-' + str(today)
-    print('pdfgenv2= {} and filename= {}'.format(pdfgenv2, filename))
 
     if filename.startswith(app_live.strip()):
         return 's3://' + bucket + '/' + filename
@@ -91,7 +83,7 @@ def lambda_handler(event, context):
     }
 
     api_url = "https://api.github.com/repos/{}/{}/actions/workflows/{}/dispatches".format(owner, repo, workflow_name)
-    print("api_url {}".format(api_url))
+    print("api_url= {}".format(api_url))
 
     deploy_body_data = {
         "ref": branch,
